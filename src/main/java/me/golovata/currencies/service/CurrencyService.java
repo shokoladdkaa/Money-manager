@@ -30,12 +30,12 @@ public class CurrencyService {
         log.info("All currencies prepared!");
     }
 
-    public List<Currency> findAllCurrencies() throws InterruptedException {
+    public List<Currency> findAllCurrencies() {
         return currencyRepository.findAll();
     }
 
-    public Currency findByTargetCurrencyId(int code) {
-        return currencyRepository.findByTargetCurrency(code);
+    public Currency findByCurrencyCode(String currencyCode) {
+        return currencyRepository.findByCurrencyCode(currencyCode);
     }
 
 }

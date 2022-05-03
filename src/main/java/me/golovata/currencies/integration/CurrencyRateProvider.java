@@ -11,18 +11,19 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class CurrencyRateProvider {
-    public static final String URL_CLIENT_INFO = "https://api.monobank.ua/bank/currency";
-
     public List<Currency> getCurrencyInfo() throws IOException, InterruptedException {
         var client = HttpClient.newHttpClient();
 
         var request = HttpRequest.newBuilder(
-                        URI.create(URL_CLIENT_INFO))
+                        URI.create(String.format("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?date="+  getCurrentDate() + "&json")))
                 .header("accept", "application/json")
                 .GET()
                 .build();
@@ -32,17 +33,22 @@ public class CurrencyRateProvider {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        List<MonoCurrency> currencyResponses = objectMapper.readValue(response.body(),
-                new TypeReference<List<MonoCurrency>>(){});
+        List<MinfinCurrency> currencyResponses = objectMapper.readValue(response.body(),
+                new TypeReference<List<MinfinCurrency>>(){});
 
         return currencyResponses.stream()
                 .map(currency -> Currency.builder()
-                        .baseCurrency(currency.getBaseCurrency())
-                        .targetCurrency(currency.getTargetCurrency())
-                        .rateSell(currency.getRateSell())
-                        .rateBuy(currency.getRateBuy())
-                        .rateCross(currency.getRateCross())
+                        .currencyNumber(currency.getCurrencyNumber())
+                        .currencyFullName(currency.getCurrencyFullName())
+                        .rate(currency.getRate())
+                        .currencyCode(currency.getCurrencyCode())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private String getCurrentDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        return dateFormat.format(date);
     }
 }

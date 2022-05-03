@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.golovata.currencies.CurrencyCode;
 
 import javax.persistence.*;
 
@@ -19,18 +20,15 @@ public class Currency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "baseCurrency")
-    private Integer baseCurrency;
+    @Column(name = "currencyNumber")
+    private Integer currencyNumber;
 
-    @Column(name = "targetCurrency")
-    private Integer targetCurrency;
+    @Column(name = "currencyFullName")
+    private String currencyFullName;
 
-    @Column(name = "rateBuy")
-    private Double rateBuy;
+    @Column(name = "rate")
+    private Double rate;
 
-    @Column(name = "rateSell")
-    private Double rateSell;
-
-    @Column(name = "rateCross")
-    private Double rateCross;
+    @Column(name = "currencyCode")
+    private String currencyCode;
 }
